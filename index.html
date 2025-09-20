@@ -1,1 +1,2300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BossX - Crypto Exchange Platform | Validator Masternode System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        .gradient-bg {
+            background: linear-gradient(to bottom, #1a1a1a, #000000);
+        }
+        .gradient-border {
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        .gradient-card {
+            background: linear-gradient(to right, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.1));
+        }
+        .hover-scale {
+            transition: transform 0.2s ease-in-out;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+        .sidebar {
+            transition: width 0.3s ease-in-out;
+            width: 14rem;
+            min-width: 14rem;
+        }
+        .sidebar.collapsed {
+            width: 4rem;
+            min-width: 4rem;
+        }
+        .menu-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .menu-item:hover {
+            background-color: rgba(31, 41, 55, 0.5);
+            transform: translateX(4px);
+        }
+        .menu-item.active {
+            background: linear-gradient(to right, rgba(245, 158, 11, 0.2), rgba(234, 179, 8, 0.2));
+            color: #f59e0b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .crypto-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.75rem;
+            color: #000;
+            overflow: hidden;
+        }
+        .crypto-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+        .crypto-icon-large {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, rgba(245, 158, 11, 0.1), rgba(234, 179, 8, 0.1));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .profile-picture {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #374151;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: border-color 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+        }
+        .stat-card:hover {
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+        /* Corner Dots */
+        .corner-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #22c55e, #10b981);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 0 6px #10b981;
+            pointer-events: none;
+        }
+        .stat-card:hover .corner-dot {
+            opacity: 1;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        .corner-dot.top-left {
+            top: -3px;
+            left: -3px;
+        }
+        .corner-dot.top-right {
+            top: -3px;
+            right: -3px;
+        }
+        .corner-dot.bottom-right {
+            bottom: -3px;
+            right: -3px;
+        }
+        .corner-dot.bottom-left {
+            bottom: -3px;
+            left: -3px;
+        }
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 6px #10b981;
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 12px #22c55e;
+            }
+        }
+        /* Border Lines */
+        .border-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, #10b981, #22c55e, #10b981, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .stat-card:hover .border-line {
+            opacity: 1;
+        }
+        .border-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #10b981, #22c55e, #10b981, transparent);
+            animation: borderTop 3s linear infinite;
+            transform-origin: left;
+        }
+        .border-right {
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #10b981, #22c55e, #10b981, transparent);
+            animation: borderRight 3s linear infinite 0.7s;
+            transform-origin: top;
+        }
+        .border-bottom {
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(270deg, transparent, #10b981, #22c55e, #10b981, transparent);
+            animation: borderBottom 3s linear infinite 1.4s;
+            transform-origin: right;
+        }
+        .border-left {
+            bottom: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(0deg, transparent, #10b981, #22c55e, #10b981, transparent);
+            animation: borderLeft 3s linear infinite 2.1s;
+            transform-origin: bottom;
+        }
+        @keyframes borderTop {
+            0% {
+                transform: scaleX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            25% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+            30% {
+                opacity: 0;
+            }
+            100% {
+                transform: scaleX(1);
+                opacity: 0;
+            }
+        }
+        @keyframes borderRight {
+            0% {
+                transform: scaleY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            25% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+            30% {
+                opacity: 0;
+            }
+            100% {
+                transform: scaleY(1);
+                opacity: 0;
+            }
+        }
+        @keyframes borderBottom {
+            0% {
+                transform: scaleX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            25% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+            30% {
+                opacity: 0;
+            }
+            100% {
+                transform: scaleX(1);
+                opacity: 0;
+            }
+        }
+        @keyframes borderLeft {
+            0% {
+                transform: scaleY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            25% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+            30% {
+                opacity: 0;
+            }
+            100% {
+                transform: scaleY(1);
+                opacity: 0;
+            }
+        }
+        /* Running Text Animation */
+        #running-text {
+            animation: scroll-left 60s linear infinite;
+        }
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        #running-text:hover {
+            animation-play-state: paused;
+        }
+        /* Power Button Styles */
+        .power-button {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #374151;
+            background: linear-gradient(145deg, #1f2937, #111827);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 8px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .power-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 25px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .power-button.on {
+            border-color: #10b981;
+            background: linear-gradient(145deg, #059669, #047857);
+            box-shadow: 
+                0 8px 15px rgba(16, 185, 129, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(16, 185, 129, 0.5);
+            cursor: not-allowed;
+        }
+        .power-button.on:hover {
+            transform: none;
+            box-shadow: 
+                0 8px 15px rgba(16, 185, 129, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(16, 185, 129, 0.5);
+        }
+        .power-button.off {
+            border-color: #dc2626;
+            background: linear-gradient(145deg, #b91c1c, #991b1b);
+            box-shadow: 
+                0 8px 15px rgba(220, 38, 38, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 20px rgba(220, 38, 38, 0.5);
+        }
+        .power-button.off:hover {
+            box-shadow: 
+                0 12px 25px rgba(220, 38, 38, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 25px rgba(220, 38, 38, 0.6);
+        }
+        .power-icon {
+            font-size: 24px;
+            color: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        /* Copy Button Animation */
+        .copy-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .copy-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .copy-button:hover::before {
+            left: 100%;
+        }
+        /* Tab Animation */
+        .tab-button {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        /* Input field styles */
+        .node-input {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+            position: relative;
+            z-index: 10;
+        }
+        .node-input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+            background: rgba(31, 41, 55, 0.9);
+        }
+        .node-input::placeholder {
+            color: #9ca3af;
+        }
+        .node-input:disabled {
+            background: rgba(31, 41, 55, 0.3);
+            border-color: #4b5563;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+        /* Button styles */
+        .node-button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(145deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+        .node-button:hover:not(:disabled) {
+            background: linear-gradient(145deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+        }
+        .node-button:active {
+            transform: translateY(0);
+        }
+        .node-button:disabled {
+            background: linear-gradient(145deg, #6b7280, #4b5563);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        /* Convert button specific styles */
+        .convert-button {
+            background: linear-gradient(145deg, #3b82f6, #2563eb) !important;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3) !important;
+        }
+        .convert-button:hover:not(:disabled) {
+            background: linear-gradient(145deg, #2563eb, #1d4ed8) !important;
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4) !important;
+            transform: translateY(-2px);
+        }
+        /* Withdrawal button specific styles */
+        .withdrawal-button {
+            background: linear-gradient(145deg, #dc2626, #b91c1c) !important;
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3) !important;
+        }
+        .withdrawal-button:hover:not(:disabled) {
+            background: linear-gradient(145deg, #b91c1c, #991b1b) !important;
+            box-shadow: 0 6px 12px rgba(220, 38, 38, 0.4) !important;
+            transform: translateY(-2px);
+        }
+        /* Success/Error message */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        .error-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, #dc2626, #b91c1c);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        /* Network selection styles */
+        .network-option {
+            padding: 0.75rem;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            background: rgba(31, 41, 55, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .network-option:hover {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .network-option.selected {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.2);
+        }
+        .network-option input[type="radio"] {
+            display: none;
+        }
+        /* Page transitions */
+        .page-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            display: none;
+        }
+        .page-content.active {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+        /* Responsive Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+        @media (min-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        @media (max-width: 1023px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Responsive sidebar */
+        @media (max-width: 1440px) {
+            .sidebar {
+                width: 12rem;
+                min-width: 12rem;
+            }
+            .stat-card {
+                padding: 1rem;
+            }
+        }
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 10rem;
+                min-width: 10rem;
+            }
+            .profile-picture {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+        .main-container {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+        .content-container {
+            max-width: 100%;
+            padding: 1rem;
+        }
+        /* Countdown timer */
+        .countdown-timer {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #10b981;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .auto-claim-timer {
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #3b82f6;
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-black text-white flex main-container">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar h-screen gradient-bg gradient-border">
+            <!-- Header with Logo -->
+            <div class="p-3 border-b border-amber-500/20">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="crypto-icon">
+                            <img src="https://i.ibb.co/qYBkPDH3/Picsart-25-04-01-16-25-47-054.png" alt="BossX Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\'background: linear-gradient(145deg, #f59e0b, #d97706); color: white; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem;\\'>BX</div>'" />
+                        </div>
+                        <div id="logo-text">
+                            <h1 class="text-lg font-bold text-amber-400">BossX</h1>
+                            <p class="text-xs text-gray-400">Crypto Exchange</p>
+                        </div>
+                    </div>
+                    <button id="toggle-sidebar" class="text-gray-400 hover:text-amber-400 hover:bg-amber-500/10 p-1 rounded">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Navigation Menu -->
+            <nav class="mt-4 px-2">
+                <a href="#" class="menu-item active flex items-center px-2 py-2 mb-2 rounded-xl" data-page="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">Dashboard</span>
+                </a>
+                <a href="#" class="menu-item flex items-center px-2 py-2 mb-2 rounded-xl text-gray-400" data-page="deposit">
+                    <i data-lucide="arrow-down-circle" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">Deposit</span>
+                </a>
+                <a href="#" class="menu-item flex items-center px-2 py-2 mb-2 rounded-xl text-gray-400" data-page="withdrawal">
+                    <i data-lucide="arrow-up-circle" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">Withdrawal</span>
+                </a>
+                <a href="#" class="menu-item flex items-center px-2 py-2 mb-2 rounded-xl text-gray-400" data-page="p2p">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">Peer to Peer</span>
+                </a>
+                <a href="#" class="menu-item flex items-center px-2 py-2 mb-2 rounded-xl text-gray-400" data-page="faq">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">FAQ</span>
+                </a>
+                <a href="#" class="menu-item flex items-center px-2 py-2 mb-2 rounded-xl text-gray-400" data-page="settings">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">Setting</span>
+                </a>
+                <a href="#" class="menu-item flex items-center px-2 py-2 mb-2 rounded-xl text-gray-400" data-page="logout">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span class="ml-2 font-medium menu-text text-sm">Logout</span>
+                </a>
+            </nav>
+            <!-- Footer -->
+            <div id="sidebar-footer" class="absolute bottom-4 left-2 right-2">
+                <div class="gradient-card p-3 rounded-xl gradient-border">
+                    <div class="text-center">
+                        <div class="w-6 h-6 bg-amber-400 rounded-full mx-auto mb-1 flex items-center justify-center">
+                            <span class="text-xs font-bold text-black">BX</span>
+                        </div>
+                        <p class="text-xs text-gray-400">Premium Member</p>
+                        <p class="text-sm font-semibold text-amber-400">VIP Access</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b border-amber-500/20 px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <!-- Real-time Clock -->
+                    <div class="flex flex-col">
+                        <div id="time" class="text-amber-400 text-lg font-bold">
+                            00:00:00
+                        </div>
+                        <div id="date" class="text-gray-400 text-sm">
+                            Loading...
+                        </div>
+                    </div>
+                    <!-- Search Bar -->
+                    <div class="flex-1 max-w-sm mx-4">
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                            <input
+                                type="text"
+                                placeholder="Cari cryptocurrency, transaksi..."
+                                class="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500/20"
+                            />
+                        </div>
+                    </div>
+                    <!-- Right Side Actions -->
+                    <div class="flex items-center space-x-3">
+                        <!-- Market Status -->
+                        <div class="flex items-center space-x-2 px-2 py-1 bg-green-500/10 rounded-lg border border-green-500/20">
+                            <i data-lucide="globe" class="w-4 h-4 text-green-400"></i>
+                            <span class="text-green-400 text-sm font-medium">Market Open</span>
+                        </div>
+                        <!-- Notifications -->
+                        <button class="relative text-gray-400 hover:text-amber-400 hover:bg-amber-500/10 p-2 rounded">
+                            <i data-lucide="bell" class="w-4 h-4"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                                3
+                            </span>
+                        </button>
+                        <!-- User Profile -->
+                        <div class="flex items-center space-x-2 px-2 py-1 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-amber-500/50 transition-colors cursor-pointer">
+                            <div class="profile-picture">
+                                <img src="https://i.ibb.co/gbVsGLy0/FB-IMG-1617237754232.jpg" alt="Fery Muliawan" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\'background: linear-gradient(145deg, #3b82f6, #2563eb); color: white; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; border-radius: 50%;\\'>FM</div>'" />
+                            </div>
+                            <div class="text-sm">
+                                <p class="text-white font-medium">Fery Muliawan</p>
+                                <p class="text-amber-400 text-xs">Validator: 8055x</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-auto">
+                <div id="content" class="content-container space-y-4">
+                    <!-- Dashboard Page -->
+                    <div id="dashboard-page" class="page-content active">
+                        <!-- Running Text / Ticker -->
+                        <div class="bg-gray-900 border border-amber-500/20 rounded-xl p-3 overflow-hidden">
+                            <div class="relative">
+                                <div id="running-text" class="whitespace-nowrap text-amber-400 font-medium text-sm">
+                                    🔥 BTC +5.2% $35,000 • ETH +3.8% $1,875 • BNB -1.2% $206 • ADA +7.1% $0.52 • SOL +12.5% $98 • DOT +2.3% $6.75 • MATIC +8.9% $0.89 • LINK +4.2% $14.30 • UNI +6.7% $7.25 • AVAX +9.1% $28.40 • Market Cap: $1.2T • 24h Vol: $45.6B 🚀 | BossX Validator Masternode System Active
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 4 Stats Cards Horizontal -->
+                        <div class="stats-grid">
+                            <!-- Card 1: Aktivasi Node -->
+                            <div class="stat-card hover-scale">
+                                <!-- Corner Dots -->
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <!-- Border Lines -->
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-sm text-gray-400">Aktivasi Node</p>
+                                    <i data-lucide="cpu" class="w-4 h-4 text-amber-400"></i>
+                                </div>
+                                <div class="text-lg font-bold text-white mb-3">
+                                    <span id="bossx-balance">100,000000000 BossX</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <input 
+                                        id="activation-input"
+                                        type="number" 
+                                        placeholder="Minimal 10 BossX" 
+                                        class="node-input"
+                                        min="10"
+                                        step="0.000000001"
+                                    />
+                                    <button id="activation-button" class="node-button" onclick="activateNode()">
+                                        Aktivasi Node
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Card 2: Validasi Running -->
+                            <div class="stat-card hover-scale">
+                                <!-- Corner Dots -->
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <!-- Border Lines -->
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-sm text-gray-400">Validasi Running</p>
+                                    <i data-lucide="zap" class="w-4 h-4 text-green-400"></i>
+                                </div>
+                                <div class="text-lg font-bold text-white mb-3">
+                                    <span id="validation-balance">0,000000000 BossX</span>
+                                </div>
+                                <div class="text-center space-y-3">
+                                    <p id="validation-status" class="text-sm text-gray-400">Belum berjalan</p>
+                                    <div id="countdown-display" class="countdown-timer" style="display: none;">
+                                        Countdown: <span id="countdown-time">00:00:00</span>
+                                    </div>
+                                    <div class="flex justify-center">
+                                        <button id="power-btn" class="power-button off" onclick="togglePower()">
+                                            <i id="power-icon" data-lucide="power" class="power-icon"></i>
+                                        </button>
+                                    </div>
+                                    <p id="power-status" class="text-xs text-gray-500" style="display: none;">
+                                        Masternode sedang running - Auto stop jam 06:00
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Card 3: Reward Validasi -->
+                            <div class="stat-card hover-scale">
+                                <!-- Corner Dots -->
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <!-- Border Lines -->
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-sm text-gray-400">Reward Validasi</p>
+                                    <i data-lucide="gift" class="w-4 h-4 text-blue-400"></i>
+                                </div>
+                                <div class="text-lg font-bold text-white mb-3">
+                                    <span id="reward-balance">0,000000000 BossX</span>
+                                </div>
+                                <div class="space-y-3">
+                                    <p class="text-xs text-blue-400">
+                                        Auto claim in: <span id="auto-claim-timer" class="auto-claim-timer">--</span>s
+                                    </p>
+                                    <button class="node-button convert-button" onclick="convertToUSDT()">
+                                        Convert To USDT
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Card 4: Balance USDT -->
+                            <div class="stat-card hover-scale">
+                                <!-- Corner Dots -->
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <!-- Border Lines -->
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <p class="text-sm text-gray-400">Balance USDT</p>
+                                    <i data-lucide="dollar-sign" class="w-4 h-4 text-green-400"></i>
+                                </div>
+                                <div class="text-2xl font-bold text-white">
+                                    <span id="usdt-balance">50,00 USDT</span>
+                                </div>
+                                <p class="text-xs text-green-400 mt-1">Available balance</p>
+                            </div>
+                        </div>
+                        <!-- System Status Information -->
+                        <div class="bg-gray-900 border border-blue-500/20 rounded-xl p-4 mt-6">
+                            <div class="flex items-center mb-3">
+                                <i data-lucide="info" class="w-5 h-5 text-blue-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold text-blue-400">Informasi Sistem BossX Validator</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
+                                <div>
+                                    <p><strong>• Node Status:</strong> <span id="node-status">Belum Aktif</span></p>
+                                    <p><strong>• Auto Stop:</strong> Setiap hari jam 06:00</p>
+                                    <p><strong>• Auto Claim:</strong> Hanya saat validasi running</p>
+                                </div>
+                                <div>
+                                    <p><strong>• Minimal Aktivasi:</strong> 10 BossX</p>
+                                    <p><strong>• Minimal Convert:</strong> 1 BossX</p>
+                                    <p><strong>• Rate Convert:</strong> 1 BossX = 1 USDT</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Deposit Page -->
+                    <div id="deposit-page" class="page-content">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border border-amber-500/20 rounded-xl p-6 mb-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="text-3xl font-bold text-amber-400 mb-2">Deposit Crypto</h1>
+                                    <p class="text-gray-400">Deposit USDT dan BOSSX ke wallet Anda dengan mudah dan aman</p>
+                                </div>
+                                <div class="crypto-icon-large">
+                                    <i data-lucide="wallet" class="text-amber-400 w-8 h-8"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Currency Tabs -->
+                        <div class="bg-gray-900 border border-amber-500/20 rounded-xl p-6 mb-6">
+                            <div class="flex space-x-4 mb-6">
+                                <button id="usdt-tab" class="tab-button active relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 text-black">
+                                    USDT
+                                </button>
+                                <button id="bossx-tab" class="tab-button relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white">
+                                    BOSSX
+                                </button>
+                            </div>
+                            <!-- Deposit Content -->
+                            <div class="grid lg:grid-cols-2 gap-8">
+                                <!-- QR Code Section -->
+                                <div class="space-y-6">
+                                    <div class="stat-card p-6">
+                                        <!-- Corner Dots -->
+                                        <div class="corner-dot top-left"></div>
+                                        <div class="corner-dot top-right"></div>
+                                        <div class="corner-dot bottom-right"></div>
+                                        <div class="corner-dot bottom-left"></div>
+                                        <!-- Border Lines -->
+                                        <div class="border-line border-top"></div>
+                                        <div class="border-line border-right"></div>
+                                        <div class="border-line border-bottom"></div>
+                                        <div class="border-line border-left"></div>
+                                        <div class="text-center">
+                                            <h3 class="text-xl font-bold text-white mb-4 flex items-center justify-center">
+                                                <i data-lucide="qr-code" class="mr-2 text-amber-400 w-6 h-6"></i>
+                                                QR Code <span id="qr-currency">USDT</span>
+                                            </h3>
+                                            <div class="relative inline-block">
+                                                <img id="qr-code-image" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TQ3HBNdVFmTFvz9wz3AR2Siss7MRN1fuRM" alt="QR Code" class="w-48 h-48 mx-auto border-4 border-amber-500/30 rounded-xl" />
+                                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
+                                            </div>
+                                            <button id="download-qr" class="mt-4 flex items-center justify-center mx-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                                <i data-lucide="download" class="mr-2 w-4 h-4"></i>
+                                                Download QR Code
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Wallet Address Section -->
+                                <div class="space-y-6">
+                                    <div class="stat-card p-6">
+                                        <!-- Corner Dots -->
+                                        <div class="corner-dot top-left"></div>
+                                        <div class="corner-dot top-right"></div>
+                                        <div class="corner-dot bottom-right"></div>
+                                        <div class="corner-dot bottom-left"></div>
+                                        <!-- Border Lines -->
+                                        <div class="border-line border-top"></div>
+                                        <div class="border-line border-right"></div>
+                                        <div class="border-line border-bottom"></div>
+                                        <div class="border-line border-left"></div>
+                                        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                                            <i data-lucide="wallet" class="mr-2 text-amber-400 w-6 h-6"></i>
+                                            Alamat Wallet <span id="wallet-currency">USDT</span>
+                                        </h3>
+                                        <div class="space-y-4">
+                                            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+                                                <p class="text-sm text-gray-400 mb-2">Network:</p>
+                                                <p class="text-white font-mono">TRON (TRC20)</p>
+                                            </div>
+                                            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+                                                <p class="text-sm text-gray-400 mb-2">Alamat Wallet:</p>
+                                                <div class="flex items-center space-x-2">
+                                                    <p id="wallet-address" class="text-white font-mono text-sm break-all flex-1">
+                                                        TQ3HBNdVFmTFvz9wz3AR2Siss7MRN1fuRM
+                                                    </p>
+                                                    <button id="copy-address" class="copy-button flex items-center px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-black rounded-lg font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105">
+                                                        <i data-lucide="copy" class="mr-1 w-4 h-4"></i>
+                                                        Copy
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                                                <h4 class="text-blue-400 font-semibold mb-2 flex items-center">
+                                                    <i data-lucide="trending-up" class="mr-2 w-4 h-4"></i>
+                                                    Penting!
+                                                </h4>
+                                                <ul class="text-sm text-gray-300 space-y-1">
+                                                    <li id="warning-currency">• Hanya kirim USDT ke alamat ini</li>
+                                                    <li>• Pastikan menggunakan network TRON (TRC20)</li>
+                                                    <li id="min-deposit">• Minimal deposit: 10 USDT</li>
+                                                    <li>• Deposit akan dikonfirmasi setelah 1 konfirmasi network</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Deposit History -->
+                        <div class="bg-gray-900 border border-amber-500/20 rounded-xl p-6 mb-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-white flex items-center">
+                                    <i data-lucide="calendar" class="mr-2 text-amber-400 w-6 h-6"></i>
+                                    History Deposit <span id="history-currency">USDT</span>
+                                </h3>
+                                <button id="refresh-history" class="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                                    <i data-lucide="refresh-cw" class="mr-2 w-4 h-4"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                            <div id="history-content">
+                                <!-- History table will be inserted here -->
+                            </div>
+                        </div>
+                        <!-- Statistics Cards -->
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="stat-card p-6">
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-gray-400">Total Deposit</h4>
+                                    <i data-lucide="trending-up" class="text-green-400 w-5 h-5"></i>
+                                </div>
+                                <div id="total-deposits" class="text-2xl font-bold text-white">
+                                    2
+                                </div>
+                                <p class="text-sm text-green-400 mt-1">Transaksi berhasil</p>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-gray-400">Total Amount</h4>
+                                    <i data-lucide="wallet" class="text-amber-400 w-5 h-5"></i>
+                                </div>
+                                <div id="total-amount" class="text-2xl font-bold text-white">
+                                    351.25
+                                </div>
+                                <p id="amount-currency" class="text-sm text-amber-400 mt-1">USDT</p>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-gray-400">Pending</h4>
+                                    <i data-lucide="loader" class="text-yellow-400 w-5 h-5"></i>
+                                </div>
+                                <div id="pending-deposits" class="text-2xl font-bold text-white">
+                                    1
+                                </div>
+                                <p class="text-sm text-yellow-400 mt-1">Menunggu konfirmasi</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Withdrawal Page -->
+                    <div id="withdrawal-page" class="page-content">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border border-red-500/20 rounded-xl p-6 mb-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="text-3xl font-bold text-red-400 mb-2">Withdrawal Crypto</h1>
+                                    <p class="text-gray-400">Tarik USDT dan BOSSX dari wallet Anda dengan aman dan cepat</p>
+                                </div>
+                                <div class="crypto-icon-large">
+                                    <i data-lucide="arrow-up-circle" class="text-red-400 w-8 h-8"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Currency Tabs -->
+                        <div class="bg-gray-900 border border-red-500/20 rounded-xl p-6 mb-6">
+                            <div class="flex space-x-4 mb-6">
+                                <button id="withdrawal-usdt-tab" class="tab-button active relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white">
+                                    USDT
+                                </button>
+                                <button id="withdrawal-bossx-tab" class="tab-button relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white">
+                                    BOSSX
+                                </button>
+                            </div>
+                            <!-- Withdrawal Form -->
+                            <div class="grid lg:grid-cols-2 gap-8">
+                                <!-- Balance & Form Section -->
+                                <div class="space-y-6">
+                                    <div class="stat-card p-6">
+                                        <!-- Corner Dots -->
+                                        <div class="corner-dot top-left"></div>
+                                        <div class="corner-dot top-right"></div>
+                                        <div class="corner-dot bottom-right"></div>
+                                        <div class="corner-dot bottom-left"></div>
+                                        <!-- Border Lines -->
+                                        <div class="border-line border-top"></div>
+                                        <div class="border-line border-right"></div>
+                                        <div class="border-line border-bottom"></div>
+                                        <div class="border-line border-left"></div>
+                                        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                                            <i data-lucide="wallet" class="mr-2 text-red-400 w-6 h-6"></i>
+                                            Balance <span id="withdrawal-currency">USDT</span>
+                                        </h3>
+                                        <div class="text-center mb-6">
+                                            <div class="text-3xl font-bold text-green-400 mb-2">
+                                                <span id="withdrawal-balance">50.00 USDT</span>
+                                            </div>
+                                            <p class="text-sm text-gray-400">Saldo tersedia</p>
+                                        </div>
+                                        <div class="space-y-4">
+                                            <!-- Network Selection -->
+                                            <div id="network-selection" class="space-y-3">
+                                                <label class="text-sm text-gray-400">Pilih Network:</label>
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    <label class="network-option selected">
+                                                        <input type="radio" name="withdrawal-network" value="TRC20" checked>
+                                                        <div class="flex items-center justify-between">
+                                                            <span class="font-semibold text-white">TRC20</span>
+                                                            <span class="text-xs text-gray-400">TRON</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 mt-1">Fee: 1 USDT</div>
+                                                    </label>
+                                                    <label class="network-option">
+                                                        <input type="radio" name="withdrawal-network" value="BEP20">
+                                                        <div class="flex items-center justify-between">
+                                                            <span class="font-semibold text-white">BEP20</span>
+                                                            <span class="text-xs text-gray-400">BSC</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 mt-1">Fee: 1 USDT</div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <!-- Withdrawal Address -->
+                                            <div class="space-y-2">
+                                                <label class="text-sm text-gray-400">Alamat Wallet Tujuan:</label>
+                                                <input 
+                                                    id="withdrawal-address"
+                                                    type="text" 
+                                                    placeholder="Masukkan alamat wallet tujuan" 
+                                                    class="node-input"
+                                                />
+                                            </div>
+                                            <!-- Withdrawal Amount -->
+                                            <div class="space-y-2">
+                                                <label class="text-sm text-gray-400">Jumlah Withdrawal:</label>
+                                                <div class="relative">
+                                                    <input 
+                                                        id="withdrawal-amount"
+                                                        type="number" 
+                                                        placeholder="0.00" 
+                                                        class="node-input pr-16"
+                                                        step="0.01"
+                                                        min="0"
+                                                    />
+                                                    <button id="max-withdrawal" class="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 bg-amber-500 text-black text-xs rounded font-semibold hover:bg-amber-600 transition-colors">
+                                                        MAX
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Summary & Confirmation Section -->
+                                <div class="space-y-6">
+                                    <div class="stat-card p-6">
+                                        <!-- Corner Dots -->
+                                        <div class="corner-dot top-left"></div>
+                                        <div class="corner-dot top-right"></div>
+                                        <div class="corner-dot bottom-right"></div>
+                                        <div class="corner-dot bottom-left"></div>
+                                        <!-- Border Lines -->
+                                        <div class="border-line border-top"></div>
+                                        <div class="border-line border-right"></div>
+                                        <div class="border-line border-bottom"></div>
+                                        <div class="border-line border-left"></div>
+                                        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                                            <i data-lucide="file-text" class="mr-2 text-red-400 w-6 h-6"></i>
+                                            Ringkasan Withdrawal
+                                        </h3>
+                                        <div class="space-y-4">
+                                            <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <span class="text-gray-400">Network:</span>
+                                                    <span id="summary-network" class="text-white font-mono">TRC20</span>
+                                                </div>
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <span class="text-gray-400">Jumlah:</span>
+                                                    <span id="summary-amount" class="text-white font-mono">0.00</span>
+                                                </div>
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <span class="text-gray-400">Fee:</span>
+                                                    <span id="summary-fee" class="text-red-400 font-mono">1.00</span>
+                                                </div>
+                                                <hr class="border-gray-600 my-3">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-gray-400 font-semibold">Total Diterima:</span>
+                                                    <span id="summary-received" class="text-green-400 font-mono font-bold">0.00</span>
+                                                </div>
+                                            </div>
+                                            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                                                <h4 class="text-yellow-400 font-semibold mb-2 flex items-center">
+                                                    <i data-lucide="alert-triangle" class="mr-2 w-4 h-4"></i>
+                                                    Perhatian!
+                                                </h4>
+                                                <ul class="text-sm text-gray-300 space-y-1">
+                                                    <li id="withdrawal-min">• Minimal withdrawal: 10 USDT</li>
+                                                    <li id="withdrawal-fee">• Fee withdrawal: 1 USDT</li>
+                                                    <li>• Periksa kembali alamat tujuan sebelum konfirmasi</li>
+                                                    <li>• Proses withdrawal membutuhkan waktu 1-24 jam</li>
+                                                </ul>
+                                            </div>
+                                            <button id="withdrawal-submit" class="node-button withdrawal-button" onclick="submitWithdrawal()">
+                                                <i data-lucide="send" class="mr-2 w-4 h-4"></i>
+                                                Submit Withdrawal
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Withdrawal History -->
+                        <div class="bg-gray-900 border border-red-500/20 rounded-xl p-6 mb-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-white flex items-center">
+                                    <i data-lucide="calendar" class="mr-2 text-red-400 w-6 h-6"></i>
+                                    History Withdrawal <span id="withdrawal-history-currency">USDT</span>
+                                </h3>
+                                <button id="refresh-withdrawal-history" class="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors">
+                                    <i data-lucide="refresh-cw" class="mr-2 w-4 h-4"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                            <div id="withdrawal-history-content">
+                                <!-- History table will be inserted here -->
+                            </div>
+                        </div>
+                        <!-- Statistics Cards -->
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="stat-card p-6">
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-gray-400">Total Withdrawal</h4>
+                                    <i data-lucide="trending-down" class="text-red-400 w-5 h-5"></i>
+                                </div>
+                                <div id="total-withdrawals" class="text-2xl font-bold text-white">
+                                    0
+                                </div>
+                                <p class="text-sm text-red-400 mt-1">Transaksi berhasil</p>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-gray-400">Total Amount</h4>
+                                    <i data-lucide="wallet" class="text-red-400 w-5 h-5"></i>
+                                </div>
+                                <div id="total-withdrawal-amount" class="text-2xl font-bold text-white">
+                                    0.00
+                                </div>
+                                <p id="withdrawal-amount-currency" class="text-sm text-red-400 mt-1">USDT</p>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="corner-dot top-left"></div>
+                                <div class="corner-dot top-right"></div>
+                                <div class="corner-dot bottom-right"></div>
+                                <div class="corner-dot bottom-left"></div>
+                                <div class="border-line border-top"></div>
+                                <div class="border-line border-right"></div>
+                                <div class="border-line border-bottom"></div>
+                                <div class="border-line border-left"></div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-gray-400">Processing</h4>
+                                    <i data-lucide="loader" class="text-yellow-400 w-5 h-5"></i>
+                                </div>
+                                <div id="processing-withdrawals" class="text-2xl font-bold text-white">
+                                    0
+                                </div>
+                                <p class="text-sm text-yellow-400 mt-1">Sedang diproses</p>
+                            </div>
+                        </div>
+                    </div>                    
+                    <!-- Other Pages -->
+                    <div id="p2p-page" class="page-content">
+                        <div class="p-6">
+                            <h1 class="text-2xl font-bold text-amber-400 mb-4">Peer to Peer</h1>
+                            <p class="text-gray-400">Fitur Peer to Peer akan segera hadir...</p>
+                        </div>
+                    </div>
+                    <div id="faq-page" class="page-content">
+                        <div class="p-6">
+                            <h1 class="text-2xl font-bold text-amber-400 mb-4">FAQ</h1>
+                            <p class="text-gray-400">Fitur FAQ akan segera hadir...</p>
+                        </div>
+                    </div>
+                    <div id="settings-page" class="page-content">
+                        <div class="p-6">
+                            <h1 class="text-2xl font-bold text-amber-400 mb-4">Settings</h1>
+                            <p class="text-gray-400">Fitur Settings akan segera hadir...</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
 
+        // Global variables
+        let currentPage = 'dashboard';
+        let activeTab = 'USDT';
+        let activeWithdrawalTab = 'BOSSX';
+
+        // Dashboard variables
+        let isNodeActive = false;
+        let isValidationRunning = false;
+        let countdownInterval;
+        let validationInterval; // Tetap digunakan, tapi sekarang untuk per detik
+        let stakedAmount = 0; // Jumlah BossX yang di-stake
+        let rewardPerSecond = 0; // Reward per detik berdasarkan stake
+        let totalRewardBalance = 0;
+        let usdtBalance = 50; // Demo balance untuk withdrawal
+        let bossxBalance = 100; // Starting balance for demo
+
+        // Deposit & Withdrawal variables (tidak berubah)
+        const walletAddresses = {
+            USDT: {
+                address: 'TQ3HBNdVFmTFvz9wz3AR2Siss7MRN1fuRM',
+                qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TQ3HBNdVFmTFvz9wz3AR2Siss7MRN1fuRM'
+            },
+            BOSSX: {
+                address: 'TTfKjrU18mi223ukVmz6FMNgBkma13kVA3',
+                qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TTfKjrU18mi223ukVmz6FMNgBkma13kVA3'
+            }
+        };
+
+        const withdrawalConfig = {
+            USDT: {
+                networks: {
+                    TRC20: { fee: 1, min: 10 },
+                    BEP20: { fee: 1, min: 10 }
+                }
+            },
+            BOSSX: {
+                networks: {
+                    TRC20: { fee: 0.1, min: 1 }
+                }
+            }
+        };
+
+        const depositHistory = {
+            USDT: [
+                {
+                    id: '1',
+                    amount: 100.50,
+                    txHash: 'a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234',
+                    fromAddress: 'TXyza123456789012345678901234567890',
+                    status: 'confirmed',
+                    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+                    confirmationCount: 1
+                },
+                {
+                    id: '2',
+                    amount: 250.75,
+                    txHash: 'b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234a1',
+                    fromAddress: 'TYzab234567890123456789012345678901',
+                    status: 'confirmed',
+                    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+                    confirmationCount: 1
+                },
+                {
+                    id: '3',
+                    amount: 50.00,
+                    txHash: 'c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234a1b2',
+                    fromAddress: 'TZabc345678901234567890123456789012',
+                    status: 'pending',
+                    timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+                    confirmationCount: 0
+                }
+            ],
+            BOSSX: [
+                {
+                    id: '4',
+                    amount: 1000.0,
+                    txHash: 'd4e5f6789012345678901234567890abcdef1234567890abcdef1234a1b2c3',
+                    fromAddress: 'TAbcd456789012345678901234567890123',
+                    status: 'confirmed',
+                    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+                    confirmationCount: 1
+                },
+                {
+                    id: '5',
+                    amount: 500.0,
+                    txHash: 'e5f6789012345678901234567890abcdef1234567890abcdef1234a1b2c3d4',
+                    fromAddress: 'TBcde567890123456789012345678901234',
+                    status: 'confirmed',
+                    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+                    confirmationCount: 1
+                },
+                {
+                    id: '6',
+                    amount: 2000.0,
+                    txHash: 'f6789012345678901234567890abcdef1234567890abcdef1234a1b2c3d4e5',
+                    fromAddress: 'TCdef678901234567890123456789012345',
+                    status: 'pending',
+                    timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
+                    confirmationCount: 0
+                }
+            ]
+        };
+
+        const withdrawalHistory = {
+            USDT: [],
+            BOSSX: []
+        };
+
+        // Real-time clock
+        function updateClock() {
+            const now = new Date();
+            const timeOptions = { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const dateOptions = { 
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            document.getElementById('time').textContent = now.toLocaleTimeString('id-ID', timeOptions);
+            document.getElementById('date').textContent = now.toLocaleDateString('id-ID', dateOptions);
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            const existingMessage = document.querySelector('.success-message');
+            if (existingMessage) existingMessage.remove();
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'success-message';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 3000);
+        }
+
+        // Show error message
+        function showErrorMessage(message) {
+            const existingMessage = document.querySelector('.error-message');
+            if (existingMessage) existingMessage.remove();
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'error-message';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 3000);
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(pageId + '-page');
+            if (targetPage) targetPage.classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('text-gray-400');
+            });
+            const activeMenuItem = document.querySelector(`[data-page="${pageId}"]`);
+            if (activeMenuItem) {
+                activeMenuItem.classList.add('active');
+                activeMenuItem.classList.remove('text-gray-400');
+            }
+            currentPage = pageId;
+            if (pageId === 'deposit') updateDepositContent();
+            else if (pageId === 'withdrawal') updateWithdrawalContent();
+        }
+
+        // =============================
+        // DASHBOARD FUNCTIONS (REVISED)
+        // =============================
+
+        function activateNode() {
+            const inputValue = document.getElementById('activation-input').value;
+            const inputAmount = parseFloat(inputValue) || 0;
+            
+            if (inputAmount < 10) {
+                showErrorMessage('Minimal 10 BossX diperlukan untuk aktivasi node!');
+                return;
+            }
+            if (bossxBalance < inputAmount) {
+                showErrorMessage('Saldo BossX tidak mencukupi!');
+                return;
+            }
+            
+            // Deduct BossX balance
+            bossxBalance -= inputAmount;
+            isNodeActive = true;
+            stakedAmount = inputAmount; // Simpan jumlah stake
+            
+            // Hitung reward per detik: 10% per bulan / (30 hari * 24 jam * 3600 detik)
+            rewardPerSecond = stakedAmount * 0.000000038580246913580247;
+            
+            // Update UI
+            const activationButton = document.getElementById('activation-button');
+            const activationInput = document.getElementById('activation-input');
+            activationButton.innerHTML = 'Node Aktif ✓';
+            activationButton.style.background = 'linear-gradient(145deg, #10b981, #059669)';
+            activationButton.disabled = true;
+            activationInput.disabled = true;
+            document.getElementById('node-status').textContent = 'Aktif';
+            document.getElementById('node-status').style.color = '#10b981';
+            
+            // Tampilkan info reward di UI
+            updateRewardInfo();
+            updateBalanceDisplays();
+            showSuccessMessage(`Node aktif! Reward: ${rewardPerSecond.toFixed(12)} BossX/detik`);
+        }
+
+        function updateRewardInfo() {
+            if (!isNodeActive) return;
+            const infoDiv = document.querySelector('#dashboard-page .bg-gray-900 .grid');
+            if (infoDiv) {
+                infoDiv.innerHTML = `
+                    <div>
+                        <p><strong>• Node Status:</strong> <span id="node-status" style="color: #10b981;">Aktif</span></p>
+                        <p><strong>• Jumlah Stake:</strong> <span class="text-amber-400">${stakedAmount.toFixed(9)} BossX</span></p>
+                        <p><strong>• Auto Stop:</strong> Setiap hari jam 06:00</p>
+                    </div>
+                    <div>
+                        <p><strong>• Reward/Detik:</strong> <span class="text-blue-400">${rewardPerSecond.toFixed(12)} BossX</span></p>
+                        <p><strong>• Reward/Bulan:</strong> <span class="text-green-400">${(stakedAmount * 0.1).toFixed(9)} BossX</span></p>
+                        <p><strong>• Rate Convert:</strong> 1 BossX = 1 USDT</p>
+                    </div>
+                `;
+            }
+        }
+
+        function startValidationRunning() {
+            if (!isNodeActive) {
+                showErrorMessage('Aktivasi node terlebih dahulu!');
+                return;
+            }
+            
+            // Mulai hitung reward per detik
+            validationInterval = setInterval(() => {
+                if (!isValidationRunning) return;
+                
+                // Tambahkan reward per detik
+                totalRewardBalance += rewardPerSecond;
+                
+                // Update tampilan
+                document.getElementById('reward-balance').textContent = totalRewardBalance.toFixed(9) + ' BossX';
+                
+                // Opsional: Tampilkan akumulasi sementara di validation-balance
+                const tempAccumulated = parseFloat(document.getElementById('validation-balance').textContent.replace(' BossX', '')) || 0;
+                document.getElementById('validation-balance').textContent = (tempAccumulated + rewardPerSecond).toFixed(9) + ' BossX';
+                
+            }, 1000);
+            
+            isValidationRunning = true;
+            
+            // Update UI
+            const powerBtn = document.getElementById('power-btn');
+            const statusText = document.getElementById('validation-status');
+            const countdownDisplay = document.getElementById('countdown-display');
+            const powerStatus = document.getElementById('power-status');
+            
+            powerBtn.classList.remove('off');
+            powerBtn.classList.add('on');
+            statusText.textContent = 'Stop validasi setiap jam 06.00';
+            countdownDisplay.style.display = 'block';
+            powerStatus.style.display = 'block';
+            powerStatus.style.color = '#10b981';
+            
+            startCountdown();
+            showSuccessMessage('Validasi dimulai! Reward mengalir per detik.');
+            lucide.createIcons();
+        }
+
+        function stopValidationRunning() {
+            if (!isValidationRunning) return;
+            
+            isValidationRunning = false;
+            
+            // Reset temporary display
+            document.getElementById('validation-balance').textContent = '0,000000000 BossX';
+            
+            // Update UI
+            const powerBtn = document.getElementById('power-btn');
+            const statusText = document.getElementById('validation-status');
+            const countdownDisplay = document.getElementById('countdown-display');
+            const powerStatus = document.getElementById('power-status');
+            
+            powerBtn.classList.remove('on');
+            powerBtn.classList.add('off');
+            statusText.textContent = 'Belum berjalan';
+            countdownDisplay.style.display = 'none';
+            powerStatus.style.display = 'none';
+            
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            lucide.createIcons();
+        }
+
+        function forceStopValidation() {
+            stopValidationRunning();
+        }
+
+        function convertToUSDT() {
+            if (totalRewardBalance < 1) {
+                showErrorMessage('Minimal 1 BossX diperlukan untuk konversi ke USDT!');
+                return;
+            }
+            const convertAmount = Math.floor(totalRewardBalance);
+            usdtBalance += convertAmount;
+            totalRewardBalance -= convertAmount;
+            updateBalanceDisplays();
+            showSuccessMessage(`Berhasil convert ${convertAmount} BossX ke ${convertAmount} USDT!`);
+        }
+
+        function updateBalanceDisplays() {
+            document.getElementById('bossx-balance').textContent = bossxBalance.toFixed(9) + ' BossX';
+            document.getElementById('validation-balance').textContent = '0,000000000 BossX'; // Reset saat update
+            document.getElementById('reward-balance').textContent = totalRewardBalance.toFixed(9) + ' BossX';
+            document.getElementById('usdt-balance').textContent = usdtBalance.toFixed(2) + ' USDT';
+        }
+
+        function togglePower() {
+            if (!isNodeActive) {
+                showErrorMessage('Aktivasi node terlebih dahulu!');
+                return;
+            }
+            if (isValidationRunning) {
+                showSuccessMessage('Masternode sedang running! Hanya akan berhenti otomatis pada jam 06:00.');
+                return;
+            }
+            startValidationRunning();
+        }
+
+        function startCountdown() {
+            function updateCountdown() {
+                const now = new Date();
+                const target = new Date();
+                target.setHours(6, 0, 0, 0);
+                if (now >= target) {
+                    target.setDate(target.getDate() + 1);
+                }
+                const diff = target.getTime() - now.getTime();
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('countdown-time').textContent = timeString;
+            }
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function checkSixAMStop() {
+            const now = new Date();
+            if (now.getHours() === 6 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+                if (isValidationRunning) {
+                    forceStopValidation();
+                    showSuccessMessage('Validasi dihentikan otomatis pada jam 06:00. Silakan aktifkan kembali untuk melanjutkan.');
+                }
+            }
+        }
+
+        // =============================
+        // DEPOSIT & WITHDRAWAL FUNCTIONS (Tidak berubah)
+        // =============================
+
+        function updateDepositContent() {
+            const wallet = walletAddresses[activeTab];
+            // Update QR code and labels
+            document.getElementById('qr-currency').textContent = activeTab;
+            document.getElementById('wallet-currency').textContent = activeTab;
+            document.getElementById('history-currency').textContent = activeTab;
+            document.getElementById('qr-code-image').src = wallet.qrCode;
+            document.getElementById('wallet-address').textContent = wallet.address;
+            document.getElementById('warning-currency').textContent = `• Hanya kirim ${activeTab} ke alamat ini`;
+            document.getElementById('min-deposit').textContent = `• Minimal deposit: ${activeTab === 'USDT' ? '10 USDT' : '1 BOSSX'}`;
+            document.getElementById('amount-currency').textContent = activeTab;
+            // Update tab appearance
+            const usdtTab = document.getElementById('usdt-tab');
+            const bossxTab = document.getElementById('bossx-tab');
+            if (activeTab === 'USDT') {
+                usdtTab.className = 'tab-button active relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 text-black';
+                bossxTab.className = 'tab-button relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white';
+            } else {
+                bossxTab.className = 'tab-button active relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 text-black';
+                usdtTab.className = 'tab-button relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white';
+            }
+            // Update history
+            updateDepositHistory();
+            updateDepositStatistics();
+        }
+
+        function updateDepositHistory() {
+            const history = depositHistory[activeTab] || [];
+            const historyContent = document.getElementById('history-content');
+            if (history.length === 0) {
+                historyContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="calendar" class="text-gray-400 w-6 h-6"></i>
+                        </div>
+                        <h4 class="text-gray-400 text-lg font-semibold mb-2">Belum ada history deposit</h4>
+                        <p class="text-gray-500">History deposit ${activeTab} Anda akan muncul di sini</p>
+                    </div>
+                `;
+            } else {
+                let tableHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-700">
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Tanggal</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Jumlah</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">TX Hash</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Status</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Konfirmasi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                history.forEach(deposit => {
+                    const statusIcon = getStatusIcon(deposit.status);
+                    const statusColor = getStatusColor(deposit.status);
+                    const statusText = getStatusText(deposit.status);
+                    tableHTML += `
+                        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                            <td class="p-3">
+                                <div class="flex items-center text-white">
+                                    <i data-lucide="clock" class="mr-2 text-gray-400 w-4 h-4"></i>
+                                    ${formatDate(deposit.timestamp)}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-semibold text-amber-400">
+                                    ${formatAmount(deposit.amount)} ${activeTab}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-mono text-sm text-gray-300 max-w-32 truncate">
+                                    ${deposit.txHash}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex items-center ${statusColor}">
+                                    ${statusIcon}
+                                    <span class="ml-2 capitalize font-semibold">
+                                        ${statusText}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="text-gray-300">
+                                    ${deposit.confirmationCount}/1
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                historyContent.innerHTML = tableHTML;
+            }
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        }
+
+        function updateDepositStatistics() {
+            const history = depositHistory[activeTab] || [];
+            const confirmedDeposits = history.filter(d => d.status === 'confirmed');
+            const pendingDeposits = history.filter(d => d.status === 'pending');
+            const totalAmount = confirmedDeposits.reduce((sum, d) => sum + d.amount, 0);
+            document.getElementById('total-deposits').textContent = confirmedDeposits.length;
+            document.getElementById('total-amount').textContent = formatAmount(totalAmount);
+            document.getElementById('pending-deposits').textContent = pendingDeposits.length;
+        }
+
+        function updateWithdrawalContent() {
+            // Update balance display
+            const balance = activeWithdrawalTab === 'USDT' ? usdtBalance : bossxBalance;
+            document.getElementById('withdrawal-balance').textContent = `${formatAmount(balance)} ${activeWithdrawalTab}`;
+            // Update currency labels
+            document.getElementById('withdrawal-currency').textContent = activeWithdrawalTab;
+            document.getElementById('withdrawal-history-currency').textContent = activeWithdrawalTab;
+            document.getElementById('withdrawal-amount-currency').textContent = activeWithdrawalTab;
+            // Update network options
+            const networkSelection = document.getElementById('network-selection');
+            if (activeWithdrawalTab === 'USDT') {
+                networkSelection.style.display = 'block';
+                networkSelection.innerHTML = `
+                    <label class="text-sm text-gray-400">Pilih Network:</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="network-option selected">
+                            <input type="radio" name="withdrawal-network" value="TRC20" checked>
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-white">TRC20</span>
+                                <span class="text-xs text-gray-400">TRON</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">Fee: 1 USDT</div>
+                        </label>
+                        <label class="network-option">
+                            <input type="radio" name="withdrawal-network" value="BEP20">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-white">BEP20</span>
+                                <span class="text-xs text-gray-400">BSC</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">Fee: 1 USDT</div>
+                        </label>
+                    </div>
+                `;
+                document.getElementById('withdrawal-min').textContent = '• Minimal withdrawal: 10 USDT';
+                document.getElementById('withdrawal-fee').textContent = '• Fee withdrawal: 1 USDT';
+            } else {
+                networkSelection.style.display = 'block';
+                networkSelection.innerHTML = `
+                    <label class="text-sm text-gray-400">Network:</label>
+                    <div class="grid grid-cols-1 gap-3">
+                        <label class="network-option selected">
+                            <input type="radio" name="withdrawal-network" value="TRC20" checked>
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-white">TRC20</span>
+                                <span class="text-xs text-gray-400">TRON</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">Fee: 0.1 BOSSX</div>
+                        </label>
+                    </div>
+                `;
+                document.getElementById('withdrawal-min').textContent = '• Minimal withdrawal: 1 BOSSX';
+                document.getElementById('withdrawal-fee').textContent = '• Fee withdrawal: 0.1 BOSSX';
+            }
+            // Update tab appearance
+            const usdtTab = document.getElementById('withdrawal-usdt-tab');
+            const bossxTab = document.getElementById('withdrawal-bossx-tab');
+            if (activeWithdrawalTab === 'USDT') {
+                usdtTab.className = 'tab-button active relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white';
+                bossxTab.className = 'tab-button relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white';
+            } else {
+                bossxTab.className = 'tab-button active relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white';
+                usdtTab.className = 'tab-button relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white';
+            }
+            // Update network selection event listeners
+            setupNetworkSelection();
+            // Update withdrawal summary
+            updateWithdrawalSummary();
+            // Update withdrawal history
+            updateWithdrawalHistory();
+            updateWithdrawalStatistics();
+        }
+
+        function setupNetworkSelection() {
+            document.querySelectorAll('.network-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    document.querySelectorAll('.network-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    // Check the radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    // Update summary
+                    updateWithdrawalSummary();
+                });
+            });
+        }
+
+        function updateWithdrawalSummary() {
+            const amount = parseFloat(document.getElementById('withdrawal-amount').value) || 0;
+            const selectedNetwork = document.querySelector('input[name="withdrawal-network"]:checked')?.value || 'TRC20';
+            const config = withdrawalConfig[activeWithdrawalTab].networks[selectedNetwork];
+            const fee = config.fee;
+            const received = Math.max(0, amount - fee);
+            document.getElementById('summary-network').textContent = selectedNetwork;
+            document.getElementById('summary-amount').textContent = `${formatAmount(amount)} ${activeWithdrawalTab}`;
+            document.getElementById('summary-fee').textContent = `${formatAmount(fee)} ${activeWithdrawalTab}`;
+            document.getElementById('summary-received').textContent = `${formatAmount(received)} ${activeWithdrawalTab}`;
+        }
+
+        function setMaxWithdrawal() {
+            const balance = activeWithdrawalTab === 'USDT' ? usdtBalance : bossxBalance;
+            const selectedNetwork = document.querySelector('input[name="withdrawal-network"]:checked')?.value || 'TRC20';
+            const config = withdrawalConfig[activeWithdrawalTab].networks[selectedNetwork];
+            const fee = config.fee;
+            // Set max amount (balance minus fee, but not less than 0)
+            const maxAmount = Math.max(0, balance - fee);
+            document.getElementById('withdrawal-amount').value = maxAmount.toFixed(activeWithdrawalTab === 'USDT' ? 2 : 8);
+            updateWithdrawalSummary();
+        }
+
+        function submitWithdrawal() {
+            const address = document.getElementById('withdrawal-address').value.trim();
+            const amount = parseFloat(document.getElementById('withdrawal-amount').value) || 0;
+            const selectedNetwork = document.querySelector('input[name="withdrawal-network"]:checked')?.value || 'TRC20';
+            const config = withdrawalConfig[activeWithdrawalTab].networks[selectedNetwork];
+            const balance = activeWithdrawalTab === 'USDT' ? usdtBalance : bossxBalance;
+            const fee = config.fee;
+            const minAmount = config.min;
+            // Validations
+            if (!address) {
+                showErrorMessage('Alamat wallet tujuan tidak boleh kosong!');
+                return;
+            }
+            if (address.length < 30) {
+                showErrorMessage('Alamat wallet tidak valid!');
+                return;
+            }
+            if (amount < minAmount) {
+                showErrorMessage(`Minimal withdrawal adalah ${minAmount} ${activeWithdrawalTab}!`);
+                return;
+            }
+            if (amount > balance) {
+                showErrorMessage('Saldo tidak mencukupi!');
+                return;
+            }
+            if ((amount + fee) > balance) {
+                showErrorMessage(`Saldo tidak cukup untuk membayar fee ${fee} ${activeWithdrawalTab}!`);
+                return;
+            }
+            // Process withdrawal
+            const received = amount - fee;
+            // Deduct balance
+            if (activeWithdrawalTab === 'USDT') {
+                usdtBalance -= amount;
+            } else {
+                bossxBalance -= amount;
+            }
+            // Add to withdrawal history
+            const newWithdrawal = {
+                id: Date.now().toString(),
+                amount: amount,
+                fee: fee,
+                received: received,
+                address: address,
+                network: selectedNetwork,
+                status: 'processing',
+                timestamp: new Date(),
+                txHash: generateFakeTxHash()
+            };
+            if (!withdrawalHistory[activeWithdrawalTab]) {
+                withdrawalHistory[activeWithdrawalTab] = [];
+            }
+            withdrawalHistory[activeWithdrawalTab].unshift(newWithdrawal);
+            // Reset form
+            document.getElementById('withdrawal-address').value = '';
+            document.getElementById('withdrawal-amount').value = '';
+            // Update UI
+            updateBalanceDisplays();
+            updateWithdrawalContent();
+            showSuccessMessage(`Withdrawal ${amount} ${activeWithdrawalTab} berhasil disubmit! Proses akan memakan waktu 1-24 jam.`);
+        }
+
+        function generateFakeTxHash() {
+            const chars = '0123456789abcdef';
+            let result = '';
+            for (let i = 0; i < 64; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function updateWithdrawalHistory() {
+            const history = withdrawalHistory[activeWithdrawalTab] || [];
+            const historyContent = document.getElementById('withdrawal-history-content');
+            if (history.length === 0) {
+                historyContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="calendar" class="text-gray-400 w-6 h-6"></i>
+                        </div>
+                        <h4 class="text-gray-400 text-lg font-semibold mb-2">Belum ada history withdrawal</h4>
+                        <p class="text-gray-500">History withdrawal ${activeWithdrawalTab} Anda akan muncul di sini</p>
+                    </div>
+                `;
+            } else {
+                let tableHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-700">
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Tanggal</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Jumlah</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Network</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Alamat</th>
+                                    <th class="text-left p-3 text-gray-400 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                history.forEach(withdrawal => {
+                    const statusIcon = getWithdrawalStatusIcon(withdrawal.status);
+                    const statusColor = getWithdrawalStatusColor(withdrawal.status);
+                    const statusText = getWithdrawalStatusText(withdrawal.status);
+                    tableHTML += `
+                        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                            <td class="p-3">
+                                <div class="flex items-center text-white">
+                                    <i data-lucide="clock" class="mr-2 text-gray-400 w-4 h-4"></i>
+                                    ${formatDate(withdrawal.timestamp)}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-semibold text-red-400">
+                                    ${formatAmount(withdrawal.amount)} ${activeWithdrawalTab}
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    Fee: ${formatAmount(withdrawal.fee)} ${activeWithdrawalTab}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="text-white font-mono text-sm">
+                                    ${withdrawal.network}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="font-mono text-sm text-gray-300 max-w-32 truncate">
+                                    ${withdrawal.address}
+                                </div>
+                            </td>
+                            <td class="p-3">
+                                <div class="flex items-center ${statusColor}">
+                                    ${statusIcon}
+                                    <span class="ml-2 capitalize font-semibold">
+                                        ${statusText}
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                historyContent.innerHTML = tableHTML;
+            }
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        }
+
+        function updateWithdrawalStatistics() {
+            const history = withdrawalHistory[activeWithdrawalTab] || [];
+            const completedWithdrawals = history.filter(w => w.status === 'completed');
+            const processingWithdrawals = history.filter(w => w.status === 'processing');
+            const totalAmount = completedWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+            document.getElementById('total-withdrawals').textContent = completedWithdrawals.length;
+            document.getElementById('total-withdrawal-amount').textContent = formatAmount(totalAmount);
+            document.getElementById('processing-withdrawals').textContent = processingWithdrawals.length;
+        }
+
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'confirmed':
+                    return '<i data-lucide="check-circle" class="text-green-400 w-4 h-4"></i>';
+                case 'failed':
+                    return '<i data-lucide="x-circle" class="text-red-400 w-4 h-4"></i>';
+                default:
+                    return '<i data-lucide="loader" class="text-yellow-400 w-4 h-4 animate-spin"></i>';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'confirmed':
+                    return 'text-green-400';
+                case 'failed':
+                    return 'text-red-400';
+                default:
+                    return 'text-yellow-400';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'confirmed':
+                    return 'Terkonfirmasi';
+                case 'failed':
+                    return 'Gagal';
+                default:
+                    return 'Pending';
+            }
+        }
+
+        function getWithdrawalStatusIcon(status) {
+            switch (status) {
+                case 'completed':
+                    return '<i data-lucide="check-circle" class="text-green-400 w-4 h-4"></i>';
+                case 'failed':
+                    return '<i data-lucide="x-circle" class="text-red-400 w-4 h-4"></i>';
+                default:
+                    return '<i data-lucide="loader" class="text-yellow-400 w-4 h-4 animate-spin"></i>';
+            }
+        }
+
+        function getWithdrawalStatusColor(status) {
+            switch (status) {
+                case 'completed':
+                    return 'text-green-400';
+                case 'failed':
+                    return 'text-red-400';
+                default:
+                    return 'text-yellow-400';
+            }
+        }
+
+        function getWithdrawalStatusText(status) {
+            switch (status) {
+                case 'completed':
+                    return 'Selesai';
+                case 'failed':
+                    return 'Gagal';
+                default:
+                    return 'Diproses';
+            }
+        }
+
+        function formatDate(date) {
+            return date.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatAmount(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 8
+            }).format(amount);
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showSuccessMessage('Alamat berhasil disalin ke clipboard!');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showSuccessMessage('Alamat berhasil disalin ke clipboard!');
+            } catch (err) {
+                showSuccessMessage('Gagal menyalin alamat. Silakan copy manual.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function downloadQRCode() {
+            const link = document.createElement('a');
+            link.download = `${activeTab}_QRCode.png`;
+            link.href = walletAddresses[activeTab].qrCode;
+            link.click();
+            showSuccessMessage(`QR Code ${activeTab} berhasil didownload!`);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle functionality
+            document.getElementById('toggle-sidebar').addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                const logoText = document.getElementById('logo-text');
+                const sidebarFooter = document.getElementById('sidebar-footer');
+                const menuTexts = document.querySelectorAll('.menu-text');
+                const toggleIcon = this.querySelector('[data-lucide]');
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    logoText.style.display = 'block';
+                    sidebarFooter.style.display = 'block';
+                    menuTexts.forEach(text => text.style.display = 'inline');
+                    toggleIcon.setAttribute('data-lucide', 'chevron-left');
+                } else {
+                    sidebar.classList.add('collapsed');
+                    logoText.style.display = 'none';
+                    sidebarFooter.style.display = 'none';
+                    menuTexts.forEach(text => text.style.display = 'none');
+                    toggleIcon.setAttribute('data-lucide', 'chevron-right');
+                }
+                lucide.createIcons();
+            });
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    if (page) {
+                        showPage(page);
+                    }
+                });
+            });
+
+            // Deposit tab switching
+            document.getElementById('usdt-tab').addEventListener('click', function() {
+                activeTab = 'USDT';
+                updateDepositContent();
+            });
+            document.getElementById('bossx-tab').addEventListener('click', function() {
+                activeTab = 'BOSSX';
+                updateDepositContent();
+            });
+
+            // Withdrawal tab switching
+            document.getElementById('withdrawal-usdt-tab').addEventListener('click', function() {
+                activeWithdrawalTab = 'USDT';
+                updateWithdrawalContent();
+            });
+            document.getElementById('withdrawal-bossx-tab').addEventListener('click', function() {
+                activeWithdrawalTab = 'BOSSX';
+                updateWithdrawalContent();
+            });
+
+            // Deposit functionality
+            document.getElementById('copy-address').addEventListener('click', function() {
+                const address = walletAddresses[activeTab].address;
+                copyToClipboard(address);
+            });
+            document.getElementById('download-qr').addEventListener('click', function() {
+                downloadQRCode();
+            });
+            document.getElementById('refresh-history').addEventListener('click', function() {
+                showSuccessMessage('History deposit berhasil diperbarui!');
+                updateDepositHistory();
+            });
+
+            // Withdrawal functionality - using event delegation for dynamically created elements
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.id === 'max-withdrawal') {
+                    setMaxWithdrawal();
+                }
+                if (e.target && e.target.id === 'refresh-withdrawal-history') {
+                    showSuccessMessage('History withdrawal berhasil diperbarui!');
+                    updateWithdrawalHistory();
+                }
+            });
+            document.addEventListener('input', function(e) {
+                if (e.target && e.target.id === 'withdrawal-amount') {
+                    updateWithdrawalSummary();
+                }
+            });
+        });
+
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            // Update clock every second
+            setInterval(updateClock, 1000);
+            // Check for 6 AM stop every second (for dashboard)
+            setInterval(checkSixAMStop, 1000);
+            updateClock();
+            // Initialize balance displays
+            updateBalanceDisplays();
+            // Initialize deposit content
+            updateDepositContent();
+            // Initialize withdrawal content
+            updateWithdrawalContent();
+            // Initialize Lucide icons
+            lucide.createIcons();
+            // Welcome message
+            setTimeout(() => {
+                showSuccessMessage('Selamat datang di BossX Crypto Exchange Platform!');
+            }, 1000);
+        });
+
+        console.log('BossX Crypto Exchange Platform - Sistem Reward Per Detik 10% Per Bulan berhasil dimuat!');
+    </script>
+</body>
+</html>
